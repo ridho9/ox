@@ -3,13 +3,13 @@ open Lexing
 open Ox
 
 let argv = Sys.get_argv ()
-let fname = if Array.length argv = 2 then argv.(1) else "stdin"
 
-let ic =
+let ic, fname =
   if Array.length argv = 2 then
-    In_channel.create argv.(1)
+    let fn = argv.(1) in
+    (In_channel.create fn, fn)
   else
-    In_channel.stdin
+    (In_channel.stdin, "stdin")
 
 let print_error_position lexbuf =
   let pos = lexbuf.lex_curr_p in
@@ -24,7 +24,7 @@ let parse_program lexbuf =
         sprintf "%s: syntax error." (print_error_position lexbuf)
       in
       Error (Error.of_string error_msg)
-  | Failure s ->
+  | Failure s | Lexer.SyntaxError s ->
       let error_msg =
         sprintf "%s: error: %s." (print_error_position lexbuf) s
       in
@@ -36,4 +36,5 @@ let () =
   let result = parse_program lexbuf in
   match result with
   | Ok res -> List.iter res ~f:(fun r -> Ast.show_expr r |> print_endline)
-  | Error err -> err |> Error.to_string_hum |> print_endline
+  (* | Ok res -> res |> Ast.show_expr |> print_endline *)
+  | Error err -> err |> Error.to_string_hum |> Out_channel.prerr_endline
