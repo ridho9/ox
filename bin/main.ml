@@ -13,8 +13,7 @@ let ic, fname =
 
 let print_error_position lexbuf =
   let pos = lexbuf.lex_curr_p in
-  sprintf "%s:[%d:%d]" pos.pos_fname pos.pos_lnum
-    (pos.pos_cnum - pos.pos_bol + 1)
+  Ast.str_pos pos
 
 let parse_program lexbuf =
   try Ok (Parser.prog Lexer.read lexbuf) with
@@ -37,9 +36,7 @@ let () =
   lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = fname };
   let result = parse_program lexbuf in
   match result with
-  (* | Ok res -> List.iter res ~f:(fun r -> Ast.show_expr r |> print_endline) *)
-  (* | Ok res ->
-      let evald = Printer.eval res in
-      print_endline evald *)
-  | Ok res -> Intp.run res
+  | Ok res ->
+      let env = Env.create () in
+      Intp.run env res
   | Error err -> err |> Error.to_string_hum |> Out_channel.prerr_endline

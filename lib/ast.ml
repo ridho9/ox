@@ -27,6 +27,7 @@ type unop = Bang | Minus [@@deriving show]
 type expr_t =
   | Int of int
   | Bool of bool
+  | Id of string
   | Nil
   | Unary of unop * expr
   | Binop of binop * expr * expr
@@ -35,7 +36,7 @@ and expr = { expr : expr_t; pos : position } [@@deriving show]
 
 let expr_pos pos expr = { expr; pos }
 
-type stmt_t = Expr of expr | Print of expr
+type stmt_t = Expr of expr | Print of expr | Decl of string * expr option
 and stmt = { stmt : stmt_t; pos : position } [@@deriving show]
 
 let stmt_pos pos stmt = { stmt; pos }

@@ -3,6 +3,7 @@
 %}
 
 %token <int> INT
+%token <string> ID
 %token TRUE
 %token FALSE
 %token NIL
@@ -19,6 +20,8 @@
 
 %token PRINT
 %token SEMICOLON
+%token VAR
+%token EQ
 
 %token EOF
 
@@ -31,8 +34,16 @@
 %%
 
 prog:
-  | s = stmt*; EOF { s }
+  | s = decl*; EOF { s }
   ;
+
+decl:
+  | s = var_decl { s }
+  | s = stmt { s }
+
+var_decl:
+  | VAR; name = ID; EQ; value = expr; SEMICOLON { Decl (name, (Some value)) |> stmt_pos $startpos }
+  | VAR; name = ID; SEMICOLON { Decl (name, None) |> stmt_pos $startpos }
 
 stmt:
   | PRINT; e = expr; SEMICOLON { Print e |> stmt_pos $startpos }
@@ -69,6 +80,7 @@ unary:
 
 primary:
   | i = INT { Int i |> expr_pos $startpos } 
+  | i = ID { Id i |> expr_pos $startpos } 
   | TRUE { Bool true |> expr_pos $startpos }
   | FALSE { Bool false |> expr_pos $startpos }
   | NIL { Nil |> expr_pos $startpos }
