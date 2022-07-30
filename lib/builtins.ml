@@ -3,13 +3,14 @@ open Value
 
 type value = Value.t
 
-exception RuntimeError of string * position option
+exception RuntimeError of string * position list
 
 let assert_int ?pos value =
   match value with
   | Int i -> i
   | _ ->
       let msg = Printf.sprintf "expected integer, found %s" (show value) in
+      let pos = match pos with None -> [] | Some pos -> [ pos ] in
       RuntimeError (msg, pos) |> raise
 
 let assert_bool ?pos value =
@@ -17,6 +18,7 @@ let assert_bool ?pos value =
   | Bool i -> i
   | _ ->
       let msg = Printf.sprintf "expected boolean, found %s" (show value) in
+      let pos = match pos with None -> [] | Some pos -> [ pos ] in
       RuntimeError (msg, pos) |> raise
 
 let unary_minus ?pos value =

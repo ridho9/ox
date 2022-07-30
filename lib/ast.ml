@@ -2,7 +2,7 @@ type position = Lexing.position
 
 let str_pos pos =
   let open Lexing in
-  Printf.sprintf "%s:[%d:%d]" pos.pos_fname pos.pos_lnum
+  Printf.sprintf "%s - %d:%d" pos.pos_fname pos.pos_lnum
     (pos.pos_cnum - pos.pos_bol + 1)
 
 let pp_position formatter (pos : position) =
@@ -33,4 +33,9 @@ type expr_t =
 
 and expr = { expr : expr_t; pos : position } [@@deriving show]
 
-let wrap_pos pos expr = { expr; pos }
+let expr_pos pos expr = { expr; pos }
+
+type stmt_t = Expr of expr | Print of expr
+and stmt = { stmt : stmt_t; pos : position } [@@deriving show]
+
+let stmt_pos pos stmt = { stmt; pos }

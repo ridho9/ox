@@ -18,6 +18,8 @@ rule read =
   | "true" { TRUE }
   | "false" { FALSE }
   | "nil" { NIL }
+  | "print" { PRINT }
+  | ";" { SEMICOLON }
   | "(" { LPAREN }
   | ")" { RPAREN }
   | "-" { MINUS }
