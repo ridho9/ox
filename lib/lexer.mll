@@ -7,7 +7,7 @@
 
 let white = [' ' '\t']+
 let newline = '\r' | '\n' | "\r\n"
-let digit = '-'? ['0'-'9']
+let digit = ['0'-'9']
 let int = digit+
 
 rule read =

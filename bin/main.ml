@@ -30,11 +30,16 @@ let parse_program lexbuf =
       in
       Error (Error.of_string error_msg)
 
+(* let handle_parsed ast = ast |> Ast.show_expr |> print_endline *)
+
 let () =
   let lexbuf = Lexing.from_channel ic in
   lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = fname };
   let result = parse_program lexbuf in
   match result with
-  | Ok res -> List.iter res ~f:(fun r -> Ast.show_expr r |> print_endline)
-  (* | Ok res -> res |> Ast.show_expr |> print_endline *)
+  (* | Ok res -> List.iter res ~f:(fun r -> Ast.show_expr r |> print_endline) *)
+  (* | Ok res ->
+      let evald = Printer.eval res in
+      print_endline evald *)
+  | Ok res -> Intp.run res
   | Error err -> err |> Error.to_string_hum |> Out_channel.prerr_endline

@@ -23,27 +23,17 @@
 %left GT GTEQ LT LTEQ
 %left PLUS MINUS
 %left STAR FSLASH
-%nonassoc BANG
 
-%start <expr list> prog
+%start <Ast.expr> prog
 %%
 
 prog:
-  | e = expr+; EOF { e }
+  | e = expr; EOF { e }
   ;
 
 expr:
-  | i = INT { Int i } 
-  | TRUE { Bool true }
-  | FALSE { Bool false }
-  | NIL { Nil }
-  | LPAREN; e = expr; RPAREN { e }
-  | o = unop; e = expr { Unary (o, e) }
-  | e1 = expr; op = binop; e2 = expr { Binop (op, e1, e2) }
-  ;
-
-%inline unop:
-  | BANG { Bang }
+  | e = unary { e }
+  | e1 = expr; op = binop; e2 = expr { Binop (op, e1, e2) |> wrap_pos $startpos(op) }
   ;
 
 %inline binop:
@@ -58,3 +48,23 @@ expr:
   | EQEQ { EqEq }
   | BANG_EQ { BangEq }
   ;
+
+unary:
+  | op = unop; e = unary { Unary (op, e) |> wrap_pos $startpos(op) }
+  | e = primary { e }
+  ;
+
+%inline unop:
+  | BANG { Bang }
+  | MINUS { Minus }
+  ;
+
+primary:
+  | i = INT { Int i |> wrap_pos $startpos } 
+  | TRUE { Bool true |> wrap_pos $startpos }
+  | FALSE { Bool false |> wrap_pos $startpos }
+  | NIL { Nil |> wrap_pos $startpos }
+  | LPAREN; e = expr; RPAREN { e }
+  ;
+
+
