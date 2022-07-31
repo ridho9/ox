@@ -9,8 +9,16 @@ let pp_table formatter (tbl : table) =
   in
   Format.pp_print_string formatter seq
 
-type t = { tbl : table } [@@deriving show]
+type t = { parent : t option; tbl : table } [@@deriving show]
 
-let create () = { tbl = Hashtbl.create 64 }
+let create () = { parent = None; tbl = Hashtbl.create 64 }
 let put env name value = Hashtbl.replace env.tbl name value
-let get env name = Hashtbl.find env.tbl name
+
+let rec get env name =
+  try Hashtbl.find env.tbl name
+  with Not_found -> (
+    match env.parent with
+    | None -> raise Not_found
+    | Some parent -> get parent name)
+
+let extend env = { parent = Some env; tbl = Hashtbl.create 64 }

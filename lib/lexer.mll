@@ -28,6 +28,8 @@ rule read =
   | ";" { SEMICOLON }
   | "(" { LPAREN }
   | ")" { RPAREN }
+  | "{" { LCURLY }
+  | "}" { RCURLY }
   | "-" { MINUS }
   | "!" { BANG }
   | "*" { STAR }

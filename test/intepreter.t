@@ -34,16 +34,17 @@ Runtime error
   > EOF
   RuntimeError: expected integer, found true
   Stacktrace: 
-    stdin - 1:1
     stdin - 1:9
+    stdin - 1:1
   [1]
+
   $ ox << EOF
   > print 1 / 0;
   > EOF
   RuntimeError: divide by zero
   Stacktrace: 
-    stdin - 1:1
     stdin - 1:9
+    stdin - 1:1
   [1]
 
 Variable declaration
@@ -52,11 +53,63 @@ Variable declaration
   > print number * 2;
   > EOF
   20
+
   $ ox << EOF
   > print number * 2;
   > EOF
   RuntimeError: undefined identifier 'number'
   Stacktrace: 
-    stdin - 1:1
     stdin - 1:7
+    stdin - 1:1
+  [1]
+
+  $ ox << EOF
+  > var number = 10;
+  > print number;
+  > number = number * 2;
+  > print number;
+  > EOF
+  10
+  20
+
+Block Expression
+  $ ox << EOF 
+  > print {
+  >   var a = 10;
+  >   a * 2
+  > };
+  > EOF
+  20
+
+  $ ox << EOF 
+  > var a = 5;
+  > print {
+  >   var a = 10;
+  >   a * 2
+  > };
+  > print a;
+  > EOF
+  20
+  5
+
+  $ ox << EOF 
+  > var a = 10;
+  > print {
+  >   var b = 2;
+  >   a * b
+  > };
+  > EOF
+  20
+
+  $ ox << EOF 
+  > print {
+  >   var b = 2;
+  >   a * b
+  > };
+  > print -1;
+  > EOF
+  RuntimeError: undefined identifier 'a'
+  Stacktrace: 
+    stdin - 3:3
+    stdin - 1:1
   [1]

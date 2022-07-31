@@ -10,18 +10,22 @@ let rec eval env expr =
   | Nil -> Nil
   | Int i -> Int i
   | Bool b -> Bool b
-  | Id id -> get_id expr.pos env id
+  | Id id -> get_id expr.pos_e env id
   | Unary (op, e) -> (
       let e' = eval env e in
       match op with
-      | Minus -> unary_minus expr.pos e'
-      | Bang -> unary_bang expr.pos e')
+      | Minus -> unary_minus expr.pos_e e'
+      | Bang -> unary_bang expr.pos_e e')
   | Binop (op, e1, e2) ->
       let v1 = eval env e1 in
       let v2 = eval env e2 in
-      binary_op expr.pos op v1 v2
+      binary_op expr.pos_e op v1 v2
+  | Block (stmts, e) -> (
+      let new_env = Env.extend env in
+      run_stmts new_env stmts;
+      match e with None -> Nil | Some e -> eval new_env e)
 
-let eval_stmt env stmt =
+and eval_stmt env stmt =
   try
     match stmt.stmt with
     | Print e ->
@@ -33,7 +37,14 @@ let eval_stmt env stmt =
     | Decl (name, e) ->
         let v = match e with None -> Nil | Some expr -> eval env expr in
         Env.put env name v
-  with RuntimeError (msg, pos) -> RuntimeError (msg, stmt.pos :: pos) |> raise
+  with RuntimeError (msg, pos) ->
+    RuntimeError (msg, stmt.pos_s :: pos) |> raise
+
+and run_stmts env = function
+  | [] -> ()
+  | stmt :: res ->
+      eval_stmt env stmt;
+      run_stmts env res
 
 let run_stmt env stmt =
   try Ok (eval_stmt env stmt)
@@ -49,7 +60,7 @@ let run_stmt env stmt =
               printf "  %s\n" s;
               print_stack tl
         in
-        print_stack pos;
+        print_stack (List.rev pos);
         Error exn
     | exn -> raise exn)
 

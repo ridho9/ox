@@ -5,11 +5,9 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github ridho9/ox))
 
-(authors "Author Name")
-
-(maintainers "Maintainer Name")
+(authors "Ridho Pratama")
 
 (license LICENSE)
 

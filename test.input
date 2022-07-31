@@ -1,2 +1,4 @@
-var age = 10;
-print age*2;
+print {
+  var a = 5;
+ 10 * 2 
+};

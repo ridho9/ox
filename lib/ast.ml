@@ -31,12 +31,11 @@ type expr_t =
   | Nil
   | Unary of unop * expr
   | Binop of binop * expr * expr
+  | Block of stmt list * expr option
 
-and expr = { expr : expr_t; pos : position } [@@deriving show]
+and expr = { expr : expr_t; pos_e : position }
+and stmt_t = Expr of expr | Print of expr | Decl of string * expr option
+and stmt = { stmt : stmt_t; pos_s : position } [@@deriving show]
 
-let expr_pos pos expr = { expr; pos }
-
-type stmt_t = Expr of expr | Print of expr | Decl of string * expr option
-and stmt = { stmt : stmt_t; pos : position } [@@deriving show]
-
-let stmt_pos pos stmt = { stmt; pos }
+let expr_pos pos_e expr = { expr; pos_e }
+let stmt_pos pos_s stmt = { stmt; pos_s }

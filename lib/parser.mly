@@ -10,6 +10,8 @@
 
 %token LPAREN
 %token RPAREN
+%token LCURLY
+%token RCURLY
 %token MINUS
 %token BANG
 %token STAR
@@ -34,20 +36,22 @@
 %%
 
 prog:
-  | s = decl*; EOF { s }
+  | s = stmt_semic*; EOF { s }
   ;
+
+stmt_semic:
+  | s = decl; SEMICOLON { s }
 
 decl:
   | s = var_decl { s }
   | s = stmt { s }
 
 var_decl:
-  | VAR; name = ID; EQ; value = expr; SEMICOLON { Decl (name, (Some value)) |> stmt_pos $startpos }
-  | VAR; name = ID; SEMICOLON { Decl (name, None) |> stmt_pos $startpos }
+  | VAR; name = ID; EQ; value = expr { Decl (name, (Some value)) |> stmt_pos $startpos }
+  | VAR; name = ID { Decl (name, None) |> stmt_pos $startpos }
 
 stmt:
-  | PRINT; e = expr; SEMICOLON { Print e |> stmt_pos $startpos }
-  | e = expr; SEMICOLON { Expr e |> stmt_pos $startpos }
+  | PRINT; e = expr { Print e |> stmt_pos $startpos }
   ;
 
 expr:
@@ -78,7 +82,12 @@ unary:
   | MINUS { Minus }
   ;
 
+block_expr:
+  | LCURLY; s = stmt_semic*; e = expr?; RCURLY { Block(s, e) |> expr_pos $startpos }
+  ;
+
 primary:
+  | b = block_expr { b }
   | i = INT { Int i |> expr_pos $startpos } 
   | i = ID { Id i |> expr_pos $startpos } 
   | TRUE { Bool true |> expr_pos $startpos }
