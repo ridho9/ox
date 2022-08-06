@@ -34,7 +34,13 @@ type expr_t =
   | Block of stmt list * expr option
 
 and expr = { expr : expr_t; pos_e : position }
-and stmt_t = Expr of expr | Print of expr | Decl of string * expr option
+
+and stmt_t =
+  | Expr of expr
+  | Print of expr
+  | Decl of string * expr option
+  | Assign of string * expr
+
 and stmt = { stmt : stmt_t; pos_s : position } [@@deriving show]
 
 let expr_pos pos_e expr = { expr; pos_e }

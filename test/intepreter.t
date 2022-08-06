@@ -55,6 +55,15 @@ Variable declaration
   20
 
   $ ox << EOF
+  > var number = 10;
+  > print number;
+  > var number = 20;
+  > print number;
+  > EOF
+  10
+  20
+
+  $ ox << EOF
   > print number * 2;
   > EOF
   RuntimeError: undefined identifier 'number'
@@ -62,15 +71,6 @@ Variable declaration
     stdin - 1:7
     stdin - 1:1
   [1]
-
-  $ ox << EOF
-  > var number = 10;
-  > print number;
-  > number = number * 2;
-  > print number;
-  > EOF
-  10
-  20
 
 Block Expression
   $ ox << EOF 
@@ -113,3 +113,62 @@ Block Expression
     stdin - 3:3
     stdin - 1:1
   [1]
+
+  $ ox << EOF 
+  > print {
+  >   var b = 2;
+  > };
+  > print b;
+  > print -1;
+  > EOF
+  nil
+  RuntimeError: undefined identifier 'b'
+  Stacktrace: 
+    stdin - 4:7
+    stdin - 4:1
+  [1]
+
+Variable Assignment
+  $ ox << EOF
+  > var number = 10;
+  > print number;
+  > number = number * 2;
+  > print number;
+  > EOF
+  10
+  20
+
+  $ ox << EOF
+  > var number = 10;
+  > print number;
+  > missing = number * 2;
+  > print number;
+  > EOF
+  10
+  RuntimeError: undefined identifier 'missing'
+  Stacktrace: 
+    stdin - 3:1
+    stdin - 3:1
+  [1]
+
+Replacing outer scope variable
+  $ ox << EOF
+  > var number = 10;
+  > print number;
+  > {
+  >   number = number * 2;
+  >   print number;
+  > };
+  > print number;
+  > {
+  >   var number = 50;
+  >   number = number * 2;
+  >   print number;
+  > };
+  > print number;
+  > EOF
+  10
+  20
+  20
+  100
+  20

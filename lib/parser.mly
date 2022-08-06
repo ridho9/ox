@@ -36,22 +36,32 @@
 %%
 
 prog:
-  | s = stmt_semic*; EOF { s }
+  | s = decl_list; EOF { s }
   ;
 
-stmt_semic:
-  | s = decl; SEMICOLON { s }
+%inline decl_list:
+  | (* empty *) { [] }
+  | s = rev_decl_list; SEMICOLON { List.rev s }
+
+rev_decl_list:
+  | s = decl { [s] }
+  | left = rev_decl_list; SEMICOLON; s = decl { s :: left }
+  ;
 
 decl:
   | s = var_decl { s }
   | s = stmt { s }
+  ;
 
 var_decl:
   | VAR; name = ID; EQ; value = expr { Decl (name, (Some value)) |> stmt_pos $startpos }
   | VAR; name = ID { Decl (name, None) |> stmt_pos $startpos }
+  ;
 
 stmt:
   | PRINT; e = expr { Print e |> stmt_pos $startpos }
+  | e = expr { Expr e |> stmt_pos $startpos }
+  | n = ID; EQ; value = expr { Assign(n, value) |> stmt_pos $startpos }
   ;
 
 expr:
@@ -83,7 +93,7 @@ unary:
   ;
 
 block_expr:
-  | LCURLY; s = stmt_semic*; e = expr?; RCURLY { Block(s, e) |> expr_pos $startpos }
+  | LCURLY; s = decl_list; e = expr?; RCURLY { Block(s, e) |> expr_pos $startpos }
   ;
 
 primary:

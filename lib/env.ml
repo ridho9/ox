@@ -14,6 +14,15 @@ type t = { parent : t option; tbl : table } [@@deriving show]
 let create () = { parent = None; tbl = Hashtbl.create 64 }
 let put env name value = Hashtbl.replace env.tbl name value
 
+let rec replace env name value =
+  try
+    Hashtbl.find env.tbl name |> ignore;
+    Hashtbl.replace env.tbl name value
+  with Not_found -> (
+    match env.parent with
+    | None -> raise Not_found
+    | Some parent -> replace parent name value)
+
 let rec get env name =
   try Hashtbl.find env.tbl name
   with Not_found -> (

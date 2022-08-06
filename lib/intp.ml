@@ -37,6 +37,10 @@ and eval_stmt env stmt =
     | Decl (name, e) ->
         let v = match e with None -> Nil | Some expr -> eval env expr in
         Env.put env name v
+    | Assign (name, expr) ->
+        get_id stmt.pos_s env name |> ignore;
+        let v = eval env expr in
+        Env.replace env name v
   with RuntimeError (msg, pos) ->
     RuntimeError (msg, stmt.pos_s :: pos) |> raise
 
