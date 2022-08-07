@@ -20,6 +20,8 @@ type binop =
   | LessEq
   | EqEq
   | BangEq
+  | And
+  | Or
 [@@deriving show]
 
 type unop = Bang | Minus [@@deriving show]

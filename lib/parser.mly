@@ -19,6 +19,7 @@
 %token PLUS
 %token GT GTEQ LT LTEQ
 %token EQEQ BANG_EQ
+%token AND OR
 
 %token PRINT
 %token SEMICOLON
@@ -29,6 +30,7 @@
 
 %token EOF
 
+%left AND OR
 %left EQEQ BANG_EQ
 %left GT GTEQ LT LTEQ
 %left PLUS MINUS
@@ -82,6 +84,8 @@ expr:
   | LTEQ { LessEq }
   | EQEQ { EqEq }
   | BANG_EQ { BangEq }
+  | AND { And }
+  | OR { Or }
   ;
 
 unary:

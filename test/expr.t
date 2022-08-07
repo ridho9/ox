@@ -155,3 +155,26 @@ If expression
   > };  
   > EOF
   -1
+
+Short circuit expression
+  $ ox << EOF
+  > print 5 and {print 1; 6};
+  > EOF
+  1
+  6
+
+  $ ox << EOF
+  > print false and { print 0; 6 };
+  > EOF
+  false
+
+  $ ox << EOF
+  > print 5 or { print 0; 6 };
+  > EOF
+  5
+
+  $ ox << EOF
+  > print false or { print 0; 6 };
+  > EOF
+  0
+  6

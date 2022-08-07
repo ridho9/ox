@@ -52,6 +52,7 @@ let binary_op pos op v1 v2 =
     | LessEq -> binop_int_int (fun x y -> Bool (x <= y))
     | EqEq -> fun x y -> Bool (x = y)
     | BangEq -> fun x y -> Bool (x != y)
+    | And | Or -> raise_err "should've handled in binop short circuit" pos
   in
   binop_func v1 v2
 

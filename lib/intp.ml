@@ -16,10 +16,24 @@ let rec eval env expr =
       match op with
       | Minus -> unary_minus expr.pos_e e'
       | Bang -> unary_bang expr.pos_e e')
-  | Binop (op, e1, e2) ->
-      let v1 = eval env e1 in
-      let v2 = eval env e2 in
-      binary_op expr.pos_e op v1 v2
+  | Binop (op, e1, e2) -> (
+      match op with
+      | And ->
+          let v1 = eval env e1 in
+          if is_truthy v1 then
+            eval env e2
+          else
+            v1
+      | Or ->
+          let v1 = eval env e1 in
+          if is_truthy v1 then
+            v1
+          else
+            eval env e2
+      | _ ->
+          let v1 = eval env e1 in
+          let v2 = eval env e2 in
+          binary_op expr.pos_e op v1 v2)
   | Block (stmts, e) -> (
       let new_env = Env.extend env in
       run_stmts new_env stmts;

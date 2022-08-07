@@ -26,6 +26,8 @@ rule read =
   | "var" { VAR }
   | "if" { IF }
   | "else" { ELSE }
+  | "and" { AND }
+  | "or" { OR }
   | ident { ID (Lexing.lexeme lexbuf) }
   | ";" { SEMICOLON }
   | "(" { LPAREN }
