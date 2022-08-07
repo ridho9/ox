@@ -24,6 +24,8 @@ rule read =
   | "nil" { NIL }
   | "print" { PRINT }
   | "var" { VAR }
+  | "if" { IF }
+  | "else" { ELSE }
   | ident { ID (Lexing.lexeme lexbuf) }
   | ";" { SEMICOLON }
   | "(" { LPAREN }

@@ -10,3 +10,5 @@ let show t =
   | Nil -> "nil"
   | Bool b -> if b then "true" else "false"
   | Int i -> Printf.sprintf "%d" i
+
+let is_truthy t = match t with Bool b -> b | Int i -> i != 0 | Nil -> false

@@ -24,6 +24,8 @@
 %token SEMICOLON
 %token VAR
 %token EQ
+%token IF
+%token ELSE
 
 %token EOF
 
@@ -41,11 +43,11 @@ prog:
 
 %inline decl_list:
   | (* empty *) { [] }
-  | s = rev_decl_list; SEMICOLON { List.rev s }
+  | s = rev_decl_list { List.rev s }
 
 rev_decl_list:
   | s = decl { [s] }
-  | left = rev_decl_list; SEMICOLON; s = decl { s :: left }
+  | left = rev_decl_list; s = decl { s :: left }
   ;
 
 decl:
@@ -54,14 +56,14 @@ decl:
   ;
 
 var_decl:
-  | VAR; name = ID; EQ; value = expr { Decl (name, (Some value)) |> stmt_pos $startpos }
-  | VAR; name = ID { Decl (name, None) |> stmt_pos $startpos }
+  | VAR; name = ID; EQ; value = expr; SEMICOLON { Decl (name, (Some value)) |> stmt_pos $startpos }
+  | VAR; name = ID; SEMICOLON { Decl (name, None) |> stmt_pos $startpos }
   ;
 
 stmt:
-  | PRINT; e = expr { Print e |> stmt_pos $startpos }
-  | e = expr { Expr e |> stmt_pos $startpos }
-  | n = ID; EQ; value = expr { Assign(n, value) |> stmt_pos $startpos }
+  | PRINT; e = expr; SEMICOLON { Print e |> stmt_pos $startpos }
+  | e = expr; SEMICOLON { Expr e |> stmt_pos $startpos }
+  | n = ID; EQ; value = expr; SEMICOLON { Assign(n, value) |> stmt_pos $startpos }
   ;
 
 expr:
@@ -92,12 +94,9 @@ unary:
   | MINUS { Minus }
   ;
 
-block_expr:
-  | LCURLY; s = decl_list; e = expr?; RCURLY { Block(s, e) |> expr_pos $startpos }
-  ;
-
 primary:
   | b = block_expr { b }
+  | i = if_expr { i }
   | i = INT { Int i |> expr_pos $startpos } 
   | i = ID { Id i |> expr_pos $startpos } 
   | TRUE { Bool true |> expr_pos $startpos }
@@ -106,4 +105,12 @@ primary:
   | LPAREN; e = expr; RPAREN { e }
   ;
 
+if_expr:
+  | IF; e = expr; b1 = block_expr { If(e, b1, None) |> expr_pos $startpos }
+  | IF; e = expr; b1 = block_expr; ELSE; b2 = block_expr { If(e, b1, Some b2) |> expr_pos $startpos }
+  | IF; e = expr; b1 = block_expr; ELSE; elif = if_expr { If(e, b1, Some elif) |> expr_pos $startpos }
+  ;
 
+block_expr:
+  | LCURLY; s = decl_list; e = expr?; RCURLY { Block(s, e) |> expr_pos $startpos }
+  ;

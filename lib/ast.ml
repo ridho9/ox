@@ -32,6 +32,7 @@ type expr_t =
   | Unary of unop * expr
   | Binop of binop * expr * expr
   | Block of stmt list * expr option
+  | If of expr * expr * expr option
 
 and expr = { expr : expr_t; pos_e : position }
 

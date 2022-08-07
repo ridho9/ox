@@ -1,4 +1,4 @@
-Test expression
+Basic expression
   $ ox << EOF
   > print 5;
   > print 1+10;
@@ -47,30 +47,6 @@ Runtime error
     stdin - 1:1
   [1]
 
-Variable declaration
-  $ ox << EOF
-  > var number = 10;
-  > print number * 2;
-  > EOF
-  20
-
-  $ ox << EOF
-  > var number = 10;
-  > print number;
-  > var number = 20;
-  > print number;
-  > EOF
-  10
-  20
-
-  $ ox << EOF
-  > print number * 2;
-  > EOF
-  RuntimeError: undefined identifier 'number'
-  Stacktrace: 
-    stdin - 1:7
-    stdin - 1:1
-  [1]
 
 Block Expression
   $ ox << EOF 
@@ -128,47 +104,54 @@ Block Expression
     stdin - 4:1
   [1]
 
-Variable Assignment
+
+If expression
   $ ox << EOF
-  > var number = 10;
-  > print number;
-  > number = number * 2;
-  > print number;
+  > print if true { 1 };  
   > EOF
-  10
-  20
+  1
 
   $ ox << EOF
-  > var number = 10;
-  > print number;
-  > missing = number * 2;
-  > print number;
+  > print if false {
+  >   1
+  > } else {
+  >  2
+  > };  
   > EOF
-  10
-  RuntimeError: undefined identifier 'missing'
-  Stacktrace: 
-    stdin - 3:1
-    stdin - 3:1
-  [1]
+  2
 
-Replacing outer scope variable
   $ ox << EOF
-  > var number = 10;
-  > print number;
-  > {
-  >   number = number * 2;
-  >   print number;
-  > };
-  > print number;
-  > {
-  >   var number = 50;
-  >   number = number * 2;
-  >   print number;
-  > };
-  > print number;
+  > var num = 2;
+  > print if num == 1 { 
+  >   1 
+  > } else if num == 2 {
+  >   2
+  > };  
   > EOF
-  10
-  20
-  20
-  100
-  20
+  2
+
+  $ ox << EOF
+  > var num = 3;
+  > print if num == 1 { 
+  >   1 
+  > } else if num == 2 {
+  >   2
+  > } else if num == 3 {
+  >   3
+  > };  
+  > EOF
+  3
+
+  $ ox << EOF
+  > var num = 4;
+  > print if num == 1 { 
+  >   1 
+  > } else if num == 2 {
+  >   2
+  > } else if num == 3 {
+  >   3
+  > } else {
+  >   -1
+  > };  
+  > EOF
+  -1

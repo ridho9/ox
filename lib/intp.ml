@@ -24,6 +24,12 @@ let rec eval env expr =
       let new_env = Env.extend env in
       run_stmts new_env stmts;
       match e with None -> Nil | Some e -> eval new_env e)
+  | If (e, v1, v2) -> (
+      let e' = eval env e in
+      if is_truthy e' then
+        eval env v1
+      else
+        match v2 with None -> Nil | Some e2 -> eval env e2)
 
 and eval_stmt env stmt =
   try
