@@ -17,7 +17,7 @@
  (name ox)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml dune)
+ (depends ocaml dune base menhir nice_parser ppx_deriving)
  (tags
   (topics "to describe" your project)))
 

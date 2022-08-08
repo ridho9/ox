@@ -11,6 +11,10 @@ bug-reports: "https://github.com/ridho9/ox/issues"
 depends: [
   "ocaml"
   "dune" {>= "3.3"}
+  "base"
+  "menhir"
+  "nice_parser"
+  "ppx_deriving"
   "odoc" {with-doc}
 ]
 build: [

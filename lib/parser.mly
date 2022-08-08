@@ -118,3 +118,5 @@ if_expr:
 block_expr:
   | LCURLY; s = decl_list; e = expr?; RCURLY { Block(s, e) |> expr_pos $startpos }
   ;
+
+%%

@@ -2,7 +2,9 @@
   open Parser
   open Lexing
 
-  exception SyntaxError of string
+  exception LexError of string
+
+  let failwith msg = raise (LexError msg)
 }
 
 let white = [' ' '\t']+
@@ -46,5 +48,5 @@ rule read =
   | "==" { EQEQ }
   | "!=" { BANG_EQ }
   | "=" { EQ }
-  | _ { raise (SyntaxError ("lexing: illegal character: " ^ Lexing.lexeme lexbuf) ) }
+  | _ { failwith ("lexing: illegal character: " ^ Lexing.lexeme lexbuf) }
   | eof { EOF }
